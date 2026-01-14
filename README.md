@@ -91,27 +91,27 @@ You can seed the database with mock worker entries to demonstrate:
 -✅ Verification ratios
 -✅ Risk scoring (WorkScore)
 
-#🎥 Demo Walkthrough (Suggested for Judges)
-Open Worker Dashboard
+## 🎥 Demo Walkthrough (Suggested for Judges)
+### 1. Open Worker Dashboard
 
-Add Work Entry (proof optional)
+### 2. Add Work Entry (proof optional)
 
-Observe:
--✅ Entry added successfully
--✅ History updates instantly
--✅ WorkScore transparency visible
+### 3. Observe:
+- ✅ Entry added successfully
+- ✅ History updates instantly
+- ✅ WorkScore transparency visible
 
-Switch to Bank Officer Dashboard
+### 4. Switch to Bank Officer Dashboard
 
-Review:
--Worker list + profiles
--Risk levels
--Score breakdown
+### 5. Review:
+- Worker list + profiles
+- Risk levels
+- Score breakdown
 
 ## 📌 Future Scope
--🔗 Direct gig platform integrations (Swiggy / Zomato / Ola via partnerships)
--🪪 KYC & verified identity linkage
+- 🔗 Direct gig platform integrations (Swiggy / Zomato / Ola via partnerships)
+- 🪪 KYC & verified identity linkage
 -📍 Real-time verification signals (GPS, receipts, platform sync)
--💸 Loan & payout pipeline (UPI + bank partnerships)
--🤖 Explainable AI-based risk scoring
+- 💸 Loan & payout pipeline (UPI + bank partnerships)
+- 🤖 Explainable AI-based risk scoring
 
