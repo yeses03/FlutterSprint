@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:workpass/screens/profile_setup_screen.dart';
 import 'package:workpass/screens/bank/bank_dashboard_screen.dart';
 import 'package:workpass/screens/worker/worker_dashboard_screen.dart';
+import 'package:workpass/screens/employer/employer_dashboard_screen.dart';
 import 'package:workpass/services/supabase_service.dart';
 import 'package:workpass/services/mock_data_service.dart';
 import 'package:workpass/theme/app_theme.dart';
@@ -62,6 +63,18 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.of(context).pushReplacement(
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) => const BankDashboardScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          ),
+        );
+      }
+    } else if (widget.role == 'employer') {
+      // Auto-login for employer
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => const EmployerDashboardScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },
@@ -164,7 +177,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 40),
                     Text(
-                      widget.role == 'bank' ? 'Bank Officer Login' : 'Gig Worker Login',
+                      widget.role == 'bank'
+                          ? 'Bank Officer Login'
+                          : widget.role == 'employer'
+                              ? 'Employer Login'
+                              : 'Gig Worker Login',
                       style: Theme.of(context).textTheme.displayMedium,
                     ),
                     const SizedBox(height: 8),
