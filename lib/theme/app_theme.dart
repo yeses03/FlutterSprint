@@ -2,153 +2,150 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Premium fintech color palette
-  static const Color deepBlue = Color(0xFF0A2540);
-  static const Color accentBlue = Color(0xFF3B82F6);
-  static const Color primaryBlue = Color(0xFF0A66C2);
-  static const Color lightBlue = Color(0xFFE7F3FF);
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color lightGray = Color(0xFFF5F7FA);
-  static const Color mediumGray = Color(0xFFE5E7EB);
-  static const Color darkGray = Color(0xFF6B7280);
-  static const Color successGreen = Color(0xFF10B981);
-  static const Color warningOrange = Color(0xFFF59E0B);
-  static const Color errorRed = Color(0xFFEF4444);
+  // Warm, consumer-friendly color palette (Swiggy/Zomato inspired)
+  static const Color primaryOrange = Color(0xFFFF6B35); // Warm orange
+  static const Color primaryBlue = Color(0xFF1E88E5); // Friendly blue
+  static const Color accentGreen = Color(0xFF4CAF50); // Success green
+  static const Color warningAmber = Color(0xFFFFB300);
+  static const Color errorRed = Color(0xFFE53935);
+  
+  // Neutral palette
+  static const Color backgroundGray = Color(0xFFF5F5F5);
+  static const Color surfaceWhite = Color(0xFFFFFFFF);
+  static const Color textPrimary = Color(0xFF212121);
+  static const Color textSecondary = Color(0xFF757575);
+  static const Color textTertiary = Color(0xFF9E9E9E);
+  static const Color dividerGray = Color(0xFFE0E0E0);
+  
+  // Status colors
+  static const Color activeGreen = Color(0xFF4CAF50);
+  static const Color offlineGray = Color(0xFF9E9E9E);
 
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: accentBlue,
-        primary: accentBlue,
+        seedColor: primaryOrange,
+        primary: primaryOrange,
         secondary: primaryBlue,
-        surface: white,
+        surface: surfaceWhite,
         error: errorRed,
-        onPrimary: white,
-        onSurface: deepBlue,
+        onPrimary: Colors.white,
+        onSurface: textPrimary,
+        background: backgroundGray,
       ),
-      scaffoldBackgroundColor: lightGray,
-      textTheme: GoogleFonts.interTextTheme().copyWith(
-        displayLarge: GoogleFonts.inter(
-          fontSize: 48,
+      scaffoldBackgroundColor: backgroundGray,
+      textTheme: GoogleFonts.poppinsTextTheme().copyWith(
+        displayLarge: GoogleFonts.poppins(
+          fontSize: 32,
           fontWeight: FontWeight.bold,
-          color: deepBlue,
-          letterSpacing: -1.5,
-        ),
-        displayMedium: GoogleFonts.inter(
-          fontSize: 36,
-          fontWeight: FontWeight.bold,
-          color: deepBlue,
-          letterSpacing: -1.0,
-        ),
-        displaySmall: GoogleFonts.inter(
-          fontSize: 28,
-          fontWeight: FontWeight.bold,
-          color: deepBlue,
+          color: textPrimary,
           letterSpacing: -0.5,
         ),
-        headlineMedium: GoogleFonts.inter(
+        displayMedium: GoogleFonts.poppins(
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+          color: textPrimary,
+          letterSpacing: -0.5,
+        ),
+        displaySmall: GoogleFonts.poppins(
           fontSize: 24,
           fontWeight: FontWeight.w600,
-          color: deepBlue,
+          color: textPrimary,
         ),
-        titleLarge: GoogleFonts.inter(
+        headlineMedium: GoogleFonts.poppins(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: deepBlue,
+          color: textPrimary,
         ),
-        bodyLarge: GoogleFonts.inter(
+        titleLarge: GoogleFonts.poppins(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: textPrimary,
+        ),
+        bodyLarge: GoogleFonts.poppins(
           fontSize: 16,
-          color: deepBlue,
+          color: textPrimary,
           height: 1.5,
         ),
-        bodyMedium: GoogleFonts.inter(
+        bodyMedium: GoogleFonts.poppins(
           fontSize: 14,
-          color: darkGray,
+          color: textSecondary,
           height: 1.5,
         ),
-        bodySmall: GoogleFonts.inter(
+        bodySmall: GoogleFonts.poppins(
           fontSize: 12,
-          color: darkGray,
+          color: textTertiary,
         ),
       ),
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
         ),
-        color: white,
+        color: surfaceWhite,
         margin: EdgeInsets.zero,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: accentBlue,
-          foregroundColor: white,
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
+          backgroundColor: primaryOrange,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
           elevation: 0,
-          shadowColor: accentBlue.withOpacity(0.3),
+          shadowColor: primaryOrange.withOpacity(0.3),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: white,
+        fillColor: surfaceWhite,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: mediumGray, width: 1),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: dividerGray, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: mediumGray, width: 1),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: dividerGray, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: accentBlue, width: 2),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: primaryOrange, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
     );
   }
 
-  // Premium glassmorphism card
-  static BoxDecoration glassmorphismCard({
-    double opacity = 0.95,
-    double blur = 10,
-  }) {
-    return BoxDecoration(
-      color: white.withOpacity(opacity),
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.05),
-          blurRadius: blur,
-          offset: const Offset(0, 4),
-        ),
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 20,
-          offset: const Offset(0, 8),
-        ),
-      ],
-    );
+  // Soft shadow for cards
+  static List<BoxShadow> cardShadow() {
+    return [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.06),
+        blurRadius: 10,
+        offset: const Offset(0, 2),
+      ),
+      BoxShadow(
+        color: Colors.black.withOpacity(0.04),
+        blurRadius: 20,
+        offset: const Offset(0, 4),
+      ),
+    ];
   }
 
-  // Premium gradient card
-  static BoxDecoration gradientCard({
-    List<Color>? colors,
-  }) {
+  // Gradient for hero sections
+  static BoxDecoration heroGradient() {
     return BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: colors ?? [accentBlue, primaryBlue],
+        colors: [primaryOrange, primaryOrange.withOpacity(0.8)],
       ),
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
-          color: accentBlue.withOpacity(0.3),
+          color: primaryOrange.withOpacity(0.3),
           blurRadius: 20,
           offset: const Offset(0, 8),
         ),
@@ -157,35 +154,16 @@ class AppTheme {
   }
 
   // Subtle gradient background
-  static BoxDecoration gradientBackground() {
+  static BoxDecoration subtleGradient() {
     return BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          lightGray,
-          white,
+          backgroundGray,
+          surfaceWhite,
         ],
       ),
     );
-  }
-
-  // Premium shadow
-  static List<BoxShadow> premiumShadow({
-    Color? color,
-    double blur = 20,
-  }) {
-    return [
-      BoxShadow(
-        color: (color ?? Colors.black).withOpacity(0.08),
-        blurRadius: blur,
-        offset: const Offset(0, 4),
-      ),
-      BoxShadow(
-        color: (color ?? Colors.black).withOpacity(0.04),
-        blurRadius: blur * 2,
-        offset: const Offset(0, 8),
-      ),
-    ];
   }
 }
