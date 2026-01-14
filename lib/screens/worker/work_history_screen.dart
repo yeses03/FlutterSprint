@@ -173,9 +173,9 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
                           )
                         : RefreshIndicator(
                             onRefresh: _loadEntries,
-                            color: AppTheme.accentBlue,
+                            color: AppTheme.primaryBlue,
                             child: ListView.builder(
-                              padding: const EdgeInsets.all(24),
+                              padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
                               itemCount: _entries.length,
                               itemBuilder: (context, index) {
                                 final entry = _entries[index];
@@ -318,7 +318,7 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
   Widget _buildPremiumInfoItem(IconData icon, String value, String label) {
     return Column(
       children: [
-        Icon(icon, color: AppTheme.accentBlue, size: 24),
+        Icon(icon, color: AppTheme.primaryBlue, size: 24),
         const SizedBox(height: 8),
         Text(
           value,

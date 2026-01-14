@@ -97,107 +97,111 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       body: Container(
         decoration: AppTheme.gradientBackground(),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    'Complete Your Profile',
-                    style: Theme.of(context).textTheme.displayMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Help us understand your work better',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 32),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Full Name',
-                      prefixIcon: Icon(Icons.person),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Complete Your Profile',
+                      style: Theme.of(context).textTheme.displayMedium,
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your name';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: _cityController,
-                    decoration: const InputDecoration(
-                      labelText: 'City',
-                      prefixIcon: Icon(Icons.location_city),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Help us understand your work better',
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your city';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Work Type (Select all that apply)',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _workTypes.map((type) {
-                      final isSelected = _selectedWorkTypes.contains(type);
-                      return FilterChip(
-                        label: Text(type),
-                        selected: isSelected,
-                        onSelected: (selected) {
-                          setState(() {
-                            if (selected) {
-                              _selectedWorkTypes.add(type);
-                            } else {
-                              _selectedWorkTypes.remove(type);
-                            }
-                          });
-                        },
-                        selectedColor: AppTheme.lightBlue,
-                        checkmarkColor: AppTheme.primaryBlue,
-                        labelStyle: TextStyle(
-                          color: isSelected ? AppTheme.primaryBlue : AppTheme.darkGray,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  if (_selectedWorkTypes.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                        'Please select at least one work type',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppTheme.errorRed,
-                            ),
+                    const SizedBox(height: 32),
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Full Name',
+                        prefixIcon: Icon(Icons.person),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your name';
+                        }
+                        return null;
+                      },
                     ),
-                  const Spacer(),
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _saveProfile,
-                    child: _isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Continue'),
-                  ),
-                  const SizedBox(height: 24),
-                ],
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _cityController,
+                      decoration: const InputDecoration(
+                        labelText: 'City',
+                        prefixIcon: Icon(Icons.location_city),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your city';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Work Type (Select all that apply)',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _workTypes.map((type) {
+                        final isSelected = _selectedWorkTypes.contains(type);
+                        return FilterChip(
+                          label: Text(type),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            setState(() {
+                              if (selected) {
+                                _selectedWorkTypes.add(type);
+                              } else {
+                                _selectedWorkTypes.remove(type);
+                              }
+                            });
+                          },
+                          selectedColor: AppTheme.lightBlue,
+                          checkmarkColor: AppTheme.primaryBlue,
+                          labelStyle: TextStyle(
+                            color: isSelected ? AppTheme.primaryBlue : AppTheme.darkGray,
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    if (_selectedWorkTypes.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          'Please select at least one work type',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: AppTheme.errorRed,
+                              ),
+                        ),
+                      ),
+                    const SizedBox(height: 40),
+                    ElevatedButton(
+                      onPressed: _isLoading ? null : _saveProfile,
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Continue'),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ),
           ),

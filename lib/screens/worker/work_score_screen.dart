@@ -132,9 +132,10 @@ class _WorkScoreScreenState extends State<WorkScoreScreen> {
             onRefresh: _loadData,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildScoreCard(score),
                   const SizedBox(height: 24),
@@ -143,6 +144,7 @@ class _WorkScoreScreenState extends State<WorkScoreScreen> {
                   _buildMetricsCard(score),
                   const SizedBox(height: 24),
                   _buildIncomeChart(),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),

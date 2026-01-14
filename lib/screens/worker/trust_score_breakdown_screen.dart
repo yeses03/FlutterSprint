@@ -44,8 +44,10 @@ class TrustScoreBreakdownScreen extends StatelessWidget {
         child: SafeArea(
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.only(bottom: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 // Premium Hero Section with Circular Gauge
                 Container(
@@ -120,7 +122,7 @@ class TrustScoreBreakdownScreen extends StatelessWidget {
                         monthlyIncomeScore,
                         'Based on average monthly earnings',
                         Icons.currency_rupee,
-                        AppTheme.accentBlue,
+                        AppTheme.primaryBlue,
                       ),
                       const SizedBox(height: 16),
                       // Stability Score
@@ -152,7 +154,7 @@ class TrustScoreBreakdownScreen extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.calculate, color: AppTheme.accentBlue),
+                                Icon(Icons.calculate, color: AppTheme.primaryBlue),
                                 const SizedBox(width: 12),
                                 Text(
                                   'How your score is calculated',
@@ -364,7 +366,7 @@ class TrustScoreBreakdownScreen extends StatelessWidget {
             color: AppTheme.accentBlue.withOpacity(0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(icon, color: AppTheme.accentBlue, size: 20),
+          child: Icon(icon, color: AppTheme.primaryBlue, size: 20),
         ),
         const SizedBox(width: 16),
         Expanded(

@@ -11,77 +11,94 @@ class RoleSelectScreen extends StatelessWidget {
       body: Container(
         decoration: AppTheme.gradientBackground(),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Spacer(),
-                Icon(
-                  Icons.work_outline,
-                  size: 80,
-                  color: AppTheme.primaryBlue,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height - 
+                           MediaQuery.of(context).padding.top - 
+                           MediaQuery.of(context).padding.bottom,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 40),
+                    Icon(
+                      Icons.work_outline,
+                      size: 80,
+                      color: AppTheme.primaryBlue,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Welcome to WorkPass',
+                      style: Theme.of(context).textTheme.displayMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Select your role to continue',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 64),
+                    _RoleButton(
+                      icon: Icons.delivery_dining,
+                      title: 'I am a Gig Worker',
+                      subtitle: 'Track your work and build credit',
+                      onTap: () {
+                        Navigator.of(context).push(
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation, secondaryAnimation) =>
+                                const LoginScreen(role: 'worker'),
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              return SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(1.0, 0.0),
+                                  end: Offset.zero,
+                                ).animate(CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeOutCubic,
+                                )),
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    _RoleButton(
+                      icon: Icons.account_balance,
+                      title: 'I am a Bank Officer',
+                      subtitle: 'View worker profiles and scores',
+                      onTap: () {
+                        Navigator.of(context).push(
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation, secondaryAnimation) =>
+                                const LoginScreen(role: 'bank'),
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              return SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(1.0, 0.0),
+                                  end: Offset.zero,
+                                ).animate(CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeOutCubic,
+                                )),
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 40),
+                  ],
                 ),
-                const SizedBox(height: 24),
-                Text(
-                  'Welcome to WorkPass',
-                  style: Theme.of(context).textTheme.displayMedium,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Select your role to continue',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 64),
-                _RoleButton(
-                  icon: Icons.delivery_dining,
-                  title: 'I am a Gig Worker',
-                  subtitle: 'Track your work and build credit',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const LoginScreen(role: 'worker'),
-                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                          return SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(1.0, 0.0),
-                              end: Offset.zero,
-                            ).animate(animation),
-                            child: child,
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 24),
-                _RoleButton(
-                  icon: Icons.account_balance,
-                  title: 'I am a Bank Officer',
-                  subtitle: 'View worker profiles and scores',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const LoginScreen(role: 'bank'),
-                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                          return SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(1.0, 0.0),
-                              end: Offset.zero,
-                            ).animate(animation),
-                            child: child,
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-                const Spacer(),
-              ],
+              ),
             ),
           ),
         ),
@@ -148,7 +165,7 @@ class _RoleButton extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(Icons.arrow_forward_ios, color: AppTheme.accentBlue, size: 20),
+              Icon(Icons.arrow_forward_ios, color: AppTheme.primaryBlue, size: 20),
             ],
           ),
         ),

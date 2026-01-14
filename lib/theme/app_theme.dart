@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Warm, consumer-friendly color palette (Swiggy/Zomato inspired)
-  static const Color primaryOrange = Color(0xFFFF6B35); // Warm orange
-  static const Color primaryBlue = Color(0xFF1E88E5); // Friendly blue
-  static const Color accentGreen = Color(0xFF4CAF50); // Success green
+  // Professional blue-based color system (Swiggy/Zomato inspired, fintech-like)
+  static const Color primaryBlue = Color(0xFF1976D2); // Deep blue for buttons, active states
+  static const Color secondaryBlue = Color(0xFF42A5F5); // Softer blue for cards, highlights
+  static const Color accentBlue = Color(0xFFE3F2FD); // Very light blue for icons, chips, progress
+  static const Color backgroundBlue = Color(0xFFF5F9FF); // Light blue-tinted off-white background
+  
+  // Status colors
+  static const Color accentGreen = Color(0xFF4CAF50);
   static const Color warningAmber = Color(0xFFFFB300);
   static const Color errorRed = Color(0xFFE53935);
   
   // Neutral palette
-  static const Color backgroundGray = Color(0xFFF5F5F5);
   static const Color surfaceWhite = Color(0xFFFFFFFF);
+  static const Color surfaceLightBlue = Color(0xFFFAFCFF); // Very light blue surface
   static const Color textPrimary = Color(0xFF212121);
   static const Color textSecondary = Color(0xFF757575);
   static const Color textTertiary = Color(0xFF9E9E9E);
@@ -25,16 +29,16 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryOrange,
-        primary: primaryOrange,
-        secondary: primaryBlue,
+        seedColor: primaryBlue,
+        primary: primaryBlue,
+        secondary: secondaryBlue,
         surface: surfaceWhite,
         error: errorRed,
         onPrimary: Colors.white,
         onSurface: textPrimary,
-        background: backgroundGray,
+        background: backgroundBlue,
       ),
-      scaffoldBackgroundColor: backgroundGray,
+      scaffoldBackgroundColor: backgroundBlue,
       textTheme: GoogleFonts.poppinsTextTheme().copyWith(
         displayLarge: GoogleFonts.poppins(
           fontSize: 32,
@@ -88,14 +92,14 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: primaryOrange,
+          backgroundColor: primaryBlue,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           elevation: 0,
-          shadowColor: primaryOrange.withOpacity(0.3),
+          shadowColor: primaryBlue.withOpacity(0.3),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -111,7 +115,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: primaryOrange, width: 2),
+          borderSide: BorderSide(color: primaryBlue, width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
@@ -134,18 +138,18 @@ class AppTheme {
     ];
   }
 
-  // Gradient for hero sections
+  // Blue gradient for hero sections
   static BoxDecoration heroGradient() {
     return BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [primaryOrange, primaryOrange.withOpacity(0.8)],
+        colors: [primaryBlue, secondaryBlue],
       ),
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
-          color: primaryOrange.withOpacity(0.3),
+          color: primaryBlue.withOpacity(0.3),
           blurRadius: 20,
           offset: const Offset(0, 8),
         ),
@@ -153,17 +157,65 @@ class AppTheme {
     );
   }
 
-  // Subtle gradient background
+  // Subtle blue-tinted background
   static BoxDecoration subtleGradient() {
     return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          backgroundGray,
-          surfaceWhite,
-        ],
-      ),
+      color: backgroundBlue,
     );
+  }
+
+  // Backward compatibility aliases (mapped to blue equivalents)
+  static const Color deepBlue = textPrimary;
+  static const Color lightBlue = accentBlue;
+  static const Color white = surfaceWhite;
+  static const Color lightGray = backgroundBlue;
+  static const Color mediumGray = dividerGray;
+  static const Color darkGray = textSecondary;
+  static const Color grey = textSecondary;
+  static const Color successGreen = accentGreen;
+  static const Color warningOrange = warningAmber;
+
+  // Backward compatibility methods
+  static BoxDecoration gradientBackground() => subtleGradient();
+  
+  static BoxDecoration glassmorphismCard({double opacity = 0.95, double blur = 10}) {
+    return BoxDecoration(
+      color: surfaceWhite.withOpacity(opacity),
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: cardShadow(),
+    );
+  }
+
+  static BoxDecoration gradientCard({List<Color>? colors}) {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: colors ?? [primaryBlue, secondaryBlue],
+      ),
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: primaryBlue.withOpacity(0.3),
+          blurRadius: 20,
+          offset: const Offset(0, 8),
+        ),
+      ],
+    );
+  }
+
+  static List<BoxShadow> premiumShadow({Color? color, double blur = 20}) {
+    return [
+      BoxShadow(
+        color: (color ?? Colors.black).withOpacity(0.08),
+        blurRadius: blur,
+        offset: const Offset(0, 4),
+      ),
+      BoxShadow(
+        color: (color ?? Colors.black).withOpacity(0.04),
+        blurRadius: blur * 2,
+        offset: const Offset(0, 8),
+      ),
+    ];
   }
 }

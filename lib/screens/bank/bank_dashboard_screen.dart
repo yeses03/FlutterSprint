@@ -92,9 +92,9 @@ class _BankDashboardScreenState extends State<BankDashboardScreen> {
   Color _getRiskColor(String riskLevel) {
     switch (riskLevel) {
       case 'Low Risk':
-        return AppTheme.successGreen;
+        return AppTheme.accentGreen;
       case 'Medium Risk':
-        return AppTheme.warningOrange;
+        return AppTheme.warningAmber;
       default:
         return AppTheme.errorRed;
     }
@@ -109,18 +109,22 @@ class _BankDashboardScreenState extends State<BankDashboardScreen> {
         backgroundColor: Colors.transparent,
       ),
       body: Container(
-        decoration: AppTheme.gradientBackground(),
+        decoration: AppTheme.subtleGradient(),
         child: SafeArea(
           child: Column(
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
                 child: Container(
-                  decoration: AppTheme.glassmorphismCard(),
+                  decoration: BoxDecoration(
+                    color: AppTheme.surfaceWhite,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: AppTheme.cardShadow(),
+                  ),
                   child: TextField(
                     decoration: InputDecoration(
                       hintText: 'Search by name or phone...',
-                      prefixIcon: Icon(Icons.search, color: AppTheme.accentBlue),
+                      prefixIcon: Icon(Icons.search, color: AppTheme.primaryBlue),
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -140,14 +144,14 @@ class _BankDashboardScreenState extends State<BankDashboardScreen> {
               Expanded(
                 child: _isLoading
                     ? Center(
-                        child: CircularProgressIndicator(color: AppTheme.accentBlue),
+                        child: CircularProgressIndicator(color: AppTheme.primaryBlue),
                       )
                     : _filteredScores.isEmpty
                         ? Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.people_outline, size: 64, color: AppTheme.darkGray),
+                                Icon(Icons.people_outline, size: 64, color: AppTheme.textTertiary),
                                 const SizedBox(height: 16),
                                 Text(
                                   'No workers found',
@@ -158,7 +162,7 @@ class _BankDashboardScreenState extends State<BankDashboardScreen> {
                           )
                         : RefreshIndicator(
                             onRefresh: _loadData,
-                            color: AppTheme.accentBlue,
+                            color: AppTheme.primaryBlue,
                             child: GridView.builder(
                               padding: const EdgeInsets.all(24),
                               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -203,10 +207,14 @@ class _BankDashboardScreenState extends State<BankDashboardScreen> {
             ),
           );
         },
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: const EdgeInsets.all(20),
-          decoration: AppTheme.glassmorphismCard(),
+          decoration: BoxDecoration(
+            color: AppTheme.surfaceWhite,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: AppTheme.cardShadow(),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -218,10 +226,16 @@ class _BankDashboardScreenState extends State<BankDashboardScreen> {
                     height: 50,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [AppTheme.accentBlue, AppTheme.primaryBlue],
+                        colors: [AppTheme.primaryBlue, AppTheme.primaryBlue.withOpacity(0.7)],
                       ),
                       shape: BoxShape.circle,
-                      boxShadow: AppTheme.premiumShadow(color: AppTheme.accentBlue),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primaryBlue.withOpacity(0.3),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Icon(
                       Icons.person,
@@ -275,14 +289,14 @@ class _BankDashboardScreenState extends State<BankDashboardScreen> {
               Text(
                 user.city,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.darkGray,
+                      color: AppTheme.textTertiary,
                     ),
               ),
               const SizedBox(height: 8),
               Text(
                 user.workType,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.darkGray,
+                      color: AppTheme.textTertiary,
                     ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -299,7 +313,7 @@ class _BankDashboardScreenState extends State<BankDashboardScreen> {
                       Text(
                         'Score',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppTheme.darkGray,
+                              color: AppTheme.textTertiary,
                             ),
                       ),
                       const SizedBox(height: 4),
@@ -307,7 +321,7 @@ class _BankDashboardScreenState extends State<BankDashboardScreen> {
                         score.score.toStringAsFixed(1),
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.accentBlue,
+                              color: AppTheme.primaryBlue,
                             ),
                       ),
                     ],
@@ -318,7 +332,7 @@ class _BankDashboardScreenState extends State<BankDashboardScreen> {
                       Text(
                         'Income',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppTheme.darkGray,
+                              color: AppTheme.textTertiary,
                             ),
                       ),
                       const SizedBox(height: 4),
@@ -326,7 +340,7 @@ class _BankDashboardScreenState extends State<BankDashboardScreen> {
                         '₹${NumberFormat('#,##,###').format(score.avgMonthlyIncome)}',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: AppTheme.deepBlue,
+                              color: AppTheme.textPrimary,
                             ),
                       ),
                     ],

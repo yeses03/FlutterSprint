@@ -59,7 +59,7 @@ class _StatusChipState extends State<StatusChip>
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.isActive ? AppTheme.activeGreen : AppTheme.offlineGray;
+    final color = widget.isActive ? AppTheme.primaryBlue : AppTheme.offlineGray;
     final text = widget.isActive ? widget.activeText : widget.inactiveText;
 
     return AnimatedBuilder(

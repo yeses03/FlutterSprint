@@ -144,67 +144,78 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Container(
         decoration: AppTheme.gradientBackground(),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                const SizedBox(height: 40),
-                Text(
-                  widget.role == 'bank' ? 'Bank Officer Login' : 'Gig Worker Login',
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Enter your phone number to continue',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 48),
-                TextField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    labelText: 'Phone Number',
-                    hintText: '+91 9876543210',
-                    prefixIcon: Icon(Icons.phone),
-                  ),
-                  enabled: !_showOtp,
-                ),
-                if (_showOtp) ...[
-                  const SizedBox(height: 24),
-                  TextField(
-                    controller: _otpController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'OTP',
-                      hintText: 'Enter 6-digit OTP',
-                      prefixIcon: Icon(Icons.lock),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height - 
+                           MediaQuery.of(context).padding.top - 
+                           MediaQuery.of(context).padding.bottom,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
-                  ),
-                ],
-                const Spacer(),
-                if (!_showOtp)
-                  ElevatedButton(
-                    onPressed: _sendOtp,
-                    child: const Text('Send OTP'),
-                  )
-                else
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _verifyOtp,
-                    child: _isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Continue'),
-                  ),
-                const SizedBox(height: 24),
-              ],
+                    const SizedBox(height: 40),
+                    Text(
+                      widget.role == 'bank' ? 'Bank Officer Login' : 'Gig Worker Login',
+                      style: Theme.of(context).textTheme.displayMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Enter your phone number to continue',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 48),
+                    TextField(
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
+                      decoration: const InputDecoration(
+                        labelText: 'Phone Number',
+                        hintText: '+91 9876543210',
+                        prefixIcon: Icon(Icons.phone),
+                      ),
+                      enabled: !_showOtp,
+                    ),
+                    if (_showOtp) ...[
+                      const SizedBox(height: 24),
+                      TextField(
+                        controller: _otpController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'OTP',
+                          hintText: 'Enter 6-digit OTP',
+                          prefixIcon: Icon(Icons.lock),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 40),
+                    if (!_showOtp)
+                      ElevatedButton(
+                        onPressed: _sendOtp,
+                        child: const Text('Send OTP'),
+                      )
+                    else
+                      ElevatedButton(
+                        onPressed: _isLoading ? null : _verifyOtp,
+                        child: _isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const Text('Continue'),
+                      ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
+              ),
             ),
           ),
         ),

@@ -185,9 +185,10 @@ class _AddWorkEntryScreenState extends State<AddWorkEntryScreen> {
               slivers: [
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.all(24.0),
+                    padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 24.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         // Platform Selection - Pill Buttons
                         Text(
@@ -254,7 +255,7 @@ class _AddWorkEntryScreenState extends State<AddWorkEntryScreen> {
                               decoration: AppTheme.glassmorphismCard(),
                               child: Row(
                                 children: [
-                                  Icon(Icons.calendar_today, color: AppTheme.accentBlue),
+                                  Icon(Icons.calendar_today, color: AppTheme.primaryBlue),
                                   const SizedBox(width: 16),
                                   Text(
                                     DateFormat('EEEE, MMM dd, yyyy').format(_selectedDate),
@@ -289,7 +290,7 @@ class _AddWorkEntryScreenState extends State<AddWorkEntryScreen> {
                                     : double.tryParse(_hoursController.text)?.toStringAsFixed(1) ?? '0.0',
                                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: AppTheme.accentBlue,
+                                      color: AppTheme.primaryBlue,
                                     ),
                               ),
                               const SizedBox(height: 8),
@@ -443,7 +444,7 @@ class _AddWorkEntryScreenState extends State<AddWorkEntryScreen> {
                                           child: Icon(
                                             Icons.cloud_upload_outlined,
                                             size: 48,
-                                            color: AppTheme.accentBlue,
+                                            color: AppTheme.primaryBlue,
                                           ),
                                         ),
                                         const SizedBox(height: 16),
@@ -556,6 +557,10 @@ class _AddWorkEntryScreenState extends State<AddWorkEntryScreen> {
                       ],
                     ),
                   ),
+                ),
+                // Bottom padding to prevent overflow
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 24),
                 ),
               ],
             ),
