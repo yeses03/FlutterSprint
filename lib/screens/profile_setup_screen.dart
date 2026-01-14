@@ -16,15 +16,19 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _cityController = TextEditingController();
-  String _selectedWorkType = 'Delivery';
+  final Set<String> _selectedWorkTypes = {};
   bool _isLoading = false;
 
   final List<String> _workTypes = [
-    'Delivery',
-    'Ride',
-    'Hotel',
+    'Food Delivery',
+    'Ride Share',
+    'Courier',
+    'Hotel Staff',
+    'Housekeeping',
+    'Warehouse',
+    'Retail',
+    'Security',
     'Freelance',
-    'Other',
   ];
 
   @override
@@ -42,11 +46,23 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     });
 
     try {
+      if (_selectedWorkTypes.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select at least one work type')),
+        );
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      final workTypeString = _selectedWorkTypes.join(' + ');
+
       final userId = await SupabaseService.createUser(
         name: _nameController.text,
         phone: widget.phone,
         city: _cityController.text,
-        workType: _selectedWorkType,
+        workType: workTypeString,
       );
 
       if (mounted) {
@@ -79,13 +95,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppTheme.lightBlue, Colors.white],
-          ),
-        ),
+        decoration: AppTheme.gradientBackground(),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -132,24 +142,49 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  DropdownButtonFormField<String>(
-                    value: _selectedWorkType,
-                    decoration: const InputDecoration(
-                      labelText: 'Work Type',
-                      prefixIcon: Icon(Icons.work),
-                    ),
-                    items: _workTypes.map((type) {
-                      return DropdownMenuItem(
-                        value: type,
-                        child: Text(type),
+                  Text(
+                    'Work Type (Select all that apply)',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: _workTypes.map((type) {
+                      final isSelected = _selectedWorkTypes.contains(type);
+                      return FilterChip(
+                        label: Text(type),
+                        selected: isSelected,
+                        onSelected: (selected) {
+                          setState(() {
+                            if (selected) {
+                              _selectedWorkTypes.add(type);
+                            } else {
+                              _selectedWorkTypes.remove(type);
+                            }
+                          });
+                        },
+                        selectedColor: AppTheme.lightBlue,
+                        checkmarkColor: AppTheme.primaryBlue,
+                        labelStyle: TextStyle(
+                          color: isSelected ? AppTheme.primaryBlue : AppTheme.darkGray,
+                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                        ),
                       );
                     }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedWorkType = value!;
-                      });
-                    },
                   ),
+                  if (_selectedWorkTypes.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        'Please select at least one work type',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppTheme.errorRed,
+                            ),
+                      ),
+                    ),
                   const Spacer(),
                   ElevatedButton(
                     onPressed: _isLoading ? null : _saveProfile,

@@ -76,13 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppTheme.lightBlue, Colors.white],
-          ),
-        ),
+        decoration: AppTheme.gradientBackground(),
         child: SafeArea(
           child: Column(
             children: [

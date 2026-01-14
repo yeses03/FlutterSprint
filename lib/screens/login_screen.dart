@@ -3,6 +3,7 @@ import 'package:workpass/screens/profile_setup_screen.dart';
 import 'package:workpass/screens/bank/bank_dashboard_screen.dart';
 import 'package:workpass/screens/worker/worker_dashboard_screen.dart';
 import 'package:workpass/services/supabase_service.dart';
+import 'package:workpass/services/mock_data_service.dart';
 import 'package:workpass/theme/app_theme.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -69,26 +70,60 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } else {
       // Check if user exists
-      final user = await SupabaseService.getUserByPhone(_phoneController.text);
+      Map<String, dynamic>? user;
+      try {
+        final userModel = await SupabaseService.getUserByPhone(_phoneController.text);
+        if (userModel != null) {
+          user = userModel.toJson();
+        }
+      } catch (e) {
+        // Supabase not available, use mock data for demo
+      }
       
       if (mounted) {
         if (user == null) {
-          // New user - go to profile setup
-          Navigator.of(context).pushReplacement(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) =>
-                  ProfileSetupScreen(phone: _phoneController.text),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-            ),
-          );
+          // For demo: Use mock user if phone matches, otherwise new user
+          if (_phoneController.text.contains('9876543210') || 
+              _phoneController.text.contains('98765')) {
+            // Demo user - use mock data
+            final mockUser = MockDataService.getMockUser();
+            Navigator.of(context).pushReplacement(
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    WorkerDashboardScreen(userId: mockUser.id),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+              ),
+            );
+          } else {
+            // New user - go to profile setup
+            Navigator.of(context).pushReplacement(
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    ProfileSetupScreen(phone: _phoneController.text),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+              ),
+            );
+          }
         } else {
           // Existing user - go to dashboard
+          final userId = user?['id'] as String? ?? '';
+          if (userId.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Login failed')),
+            );
+            setState(() {
+              _isLoading = false;
+            });
+            return;
+          }
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>
-                  WorkerDashboardScreen(userId: user.id),
+                  WorkerDashboardScreen(userId: userId),
               transitionsBuilder: (context, animation, secondaryAnimation, child) {
                 return FadeTransition(opacity: animation, child: child);
               },
@@ -107,13 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppTheme.lightBlue, Colors.white],
-          ),
-        ),
+        decoration: AppTheme.gradientBackground(),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24.0),

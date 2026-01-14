@@ -2,39 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // LinkedIn-style blue fintech colors
+  // Premium fintech color palette
+  static const Color deepBlue = Color(0xFF0A2540);
+  static const Color accentBlue = Color(0xFF3B82F6);
   static const Color primaryBlue = Color(0xFF0A66C2);
   static const Color lightBlue = Color(0xFFE7F3FF);
-  static const Color deepBlue = Color(0xFF004182);
   static const Color white = Color(0xFFFFFFFF);
-  static const Color grey = Color(0xFF666666);
-  static const Color lightGrey = Color(0xFFF3F2EF);
-  static const Color successGreen = Color(0xFF057642);
-  static const Color warningOrange = Color(0xFFE37318);
-  static const Color errorRed = Color(0xFFD93025);
+  static const Color lightGray = Color(0xFFF5F7FA);
+  static const Color mediumGray = Color(0xFFE5E7EB);
+  static const Color darkGray = Color(0xFF6B7280);
+  static const Color successGreen = Color(0xFF10B981);
+  static const Color warningOrange = Color(0xFFF59E0B);
+  static const Color errorRed = Color(0xFFEF4444);
 
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryBlue,
-        primary: primaryBlue,
-        secondary: lightBlue,
+        seedColor: accentBlue,
+        primary: accentBlue,
+        secondary: primaryBlue,
         surface: white,
-        background: lightGrey,
+        error: errorRed,
+        onPrimary: white,
+        onSurface: deepBlue,
       ),
+      scaffoldBackgroundColor: lightGray,
       textTheme: GoogleFonts.interTextTheme().copyWith(
         displayLarge: GoogleFonts.inter(
-          fontSize: 32,
+          fontSize: 48,
           fontWeight: FontWeight.bold,
           color: deepBlue,
+          letterSpacing: -1.5,
         ),
         displayMedium: GoogleFonts.inter(
-          fontSize: 24,
+          fontSize: 36,
           fontWeight: FontWeight.bold,
           color: deepBlue,
+          letterSpacing: -1.0,
         ),
         displaySmall: GoogleFonts.inter(
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+          color: deepBlue,
+          letterSpacing: -0.5,
+        ),
+        headlineMedium: GoogleFonts.inter(
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+          color: deepBlue,
+        ),
+        titleLarge: GoogleFonts.inter(
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: deepBlue,
@@ -42,81 +60,132 @@ class AppTheme {
         bodyLarge: GoogleFonts.inter(
           fontSize: 16,
           color: deepBlue,
+          height: 1.5,
         ),
         bodyMedium: GoogleFonts.inter(
           fontSize: 14,
-          color: grey,
+          color: darkGray,
+          height: 1.5,
+        ),
+        bodySmall: GoogleFonts.inter(
+          fontSize: 12,
+          color: darkGray,
         ),
       ),
-      cardTheme: CardTheme(
-        elevation: 2,
+      cardTheme: CardThemeData(
+        elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
         ),
         color: white,
+        margin: EdgeInsets.zero,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: primaryBlue,
+          backgroundColor: accentBlue,
           foregroundColor: white,
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
           ),
-          elevation: 2,
+          elevation: 0,
+          shadowColor: accentBlue.withOpacity(0.3),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: white,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.grey, width: 1),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: mediumGray, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.grey, width: 1),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: mediumGray, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: primaryBlue, width: 2),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: accentBlue, width: 2),
         ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       ),
     );
   }
 
-  // Glassmorphism card decoration
-  static BoxDecoration glassmorphismCard() {
+  // Premium glassmorphism card
+  static BoxDecoration glassmorphismCard({
+    double opacity = 0.95,
+    double blur = 10,
+  }) {
     return BoxDecoration(
-      color: white.withOpacity(0.9),
-      borderRadius: BorderRadius.circular(16),
+      color: white.withOpacity(opacity),
+      borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.1),
-          blurRadius: 10,
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: blur,
           offset: const Offset(0, 4),
+        ),
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 20,
+          offset: const Offset(0, 8),
         ),
       ],
     );
   }
 
-  // Gradient decoration
-  static BoxDecoration gradientCard() {
+  // Premium gradient card
+  static BoxDecoration gradientCard({
+    List<Color>? colors,
+  }) {
     return BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [primaryBlue, deepBlue],
+        colors: colors ?? [accentBlue, primaryBlue],
       ),
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
-          color: primaryBlue.withOpacity(0.3),
-          blurRadius: 15,
-          offset: const Offset(0, 5),
+          color: accentBlue.withOpacity(0.3),
+          blurRadius: 20,
+          offset: const Offset(0, 8),
         ),
       ],
     );
   }
-}
 
+  // Subtle gradient background
+  static BoxDecoration gradientBackground() {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          lightGray,
+          white,
+        ],
+      ),
+    );
+  }
+
+  // Premium shadow
+  static List<BoxShadow> premiumShadow({
+    Color? color,
+    double blur = 20,
+  }) {
+    return [
+      BoxShadow(
+        color: (color ?? Colors.black).withOpacity(0.08),
+        blurRadius: blur,
+        offset: const Offset(0, 4),
+      ),
+      BoxShadow(
+        color: (color ?? Colors.black).withOpacity(0.04),
+        blurRadius: blur * 2,
+        offset: const Offset(0, 8),
+      ),
+    ];
+  }
+}

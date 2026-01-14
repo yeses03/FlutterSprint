@@ -38,13 +38,7 @@ class RiskViewScreen extends StatelessWidget {
         title: const Text('Risk Assessment'),
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppTheme.lightBlue, Colors.white],
-          ),
-        ),
+        decoration: AppTheme.gradientBackground(),
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
@@ -149,16 +143,19 @@ class RiskViewScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
                       _buildMetricRow(
+                        context,
                         'Average Monthly Income',
                         '₹${workScore.avgMonthlyIncome.toStringAsFixed(0)}',
                       ),
                       const Divider(),
                       _buildMetricRow(
+                        context,
                         'Months Active',
                         '${workScore.monthsActive} months',
                       ),
                       const Divider(),
                       _buildMetricRow(
+                        context,
                         'Verification Ratio',
                         '${(workScore.verifiedRatio * 100).toStringAsFixed(1)}%',
                       ),
@@ -173,7 +170,7 @@ class RiskViewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMetricRow(String label, String value) {
+  Widget _buildMetricRow(BuildContext context, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(

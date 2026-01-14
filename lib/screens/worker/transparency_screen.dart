@@ -11,13 +11,7 @@ class TransparencyScreen extends StatelessWidget {
         title: const Text('Transparency'),
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppTheme.lightBlue, Colors.white],
-          ),
-        ),
+        decoration: AppTheme.gradientBackground(),
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),

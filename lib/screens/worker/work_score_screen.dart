@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:workpass/models/work_score_model.dart';
 import 'package:workpass/models/work_entry_model.dart';
 import 'package:workpass/services/supabase_service.dart';
+import 'package:workpass/services/mock_data_service.dart';
 import 'package:workpass/theme/app_theme.dart';
 import 'package:workpass/screens/worker/transparency_screen.dart';
 
@@ -33,15 +34,32 @@ class _WorkScoreScreenState extends State<WorkScoreScreen> {
     });
 
     try {
-      final score = await SupabaseService.getWorkScore(widget.userId);
-      final entries = await SupabaseService.getWorkEntries(widget.userId);
+      WorkScoreModel? score;
+      List<WorkEntryModel> entries = [];
+
+      try {
+        score = await SupabaseService.getWorkScore(widget.userId);
+        entries = await SupabaseService.getWorkEntries(widget.userId);
+      } catch (e) {
+        // Supabase not available, use mock data
+      }
+
+      // Use mock data if Supabase data is not available
+      if (score == null || entries.isEmpty || MockDataService.shouldUseMockData(widget.userId)) {
+        entries = MockDataService.getMockWorkEntries();
+        score = MockDataService.calculateMockWorkScore();
+      }
+
       setState(() {
         _workScore = score;
         _entries = entries;
         _isLoading = false;
       });
     } catch (e) {
+      // Fallback to mock data
       setState(() {
+        _entries = MockDataService.getMockWorkEntries();
+        _workScore = MockDataService.calculateMockWorkScore();
         _isLoading = false;
       });
     }
@@ -108,13 +126,7 @@ class _WorkScoreScreenState extends State<WorkScoreScreen> {
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppTheme.lightBlue, Colors.white],
-          ),
-        ),
+        decoration: AppTheme.gradientBackground(),
         child: SafeArea(
           child: RefreshIndicator(
             onRefresh: _loadData,

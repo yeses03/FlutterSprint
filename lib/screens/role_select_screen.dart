@@ -9,13 +9,7 @@ class RoleSelectScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppTheme.lightBlue, Colors.white],
-          ),
-        ),
+        decoration: AppTheme.gradientBackground(),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -111,42 +105,52 @@ class _RoleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        decoration: AppTheme.glassmorphismCard(),
-        child: Row(
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: AppTheme.lightBlue,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: AppTheme.primaryBlue, size: 30),
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.displaySmall,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: AppTheme.glassmorphismCard(),
+          child: Row(
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppTheme.accentBlue, AppTheme.primaryBlue],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: AppTheme.premiumShadow(color: AppTheme.accentBlue),
+                ),
+                child: Icon(icon, color: Colors.white, size: 32),
               ),
-            ),
-            const Icon(Icons.arrow_forward_ios, color: AppTheme.grey, size: 20),
-          ],
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppTheme.darkGray,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.arrow_forward_ios, color: AppTheme.accentBlue, size: 20),
+            ],
+          ),
         ),
       ),
     );

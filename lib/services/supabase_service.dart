@@ -56,7 +56,8 @@ class SupabaseService {
     required double trustWeight,
     String? proofImageUrl,
   }) async {
-    final response = await _client.from('work_entries').insert({
+    // Build payload dynamically - only include proof_image_url if provided
+    final data = <String, dynamic>{
       'user_id': userId,
       'platform': platform,
       'date': date.toIso8601String().split('T')[0],
@@ -64,8 +65,14 @@ class SupabaseService {
       'amount_earned': amountEarned,
       'verification_type': verificationType,
       'trust_weight': trustWeight,
-      'proof_image_url': proofImageUrl,
-    }).select('id').single();
+    };
+
+    // Only include proof_image_url if it's not null and not empty
+    if (proofImageUrl != null && proofImageUrl.isNotEmpty) {
+      data['proof_image_url'] = proofImageUrl;
+    }
+
+    final response = await _client.from('work_entries').insert(data).select('id').single();
 
     return response['id'] as String;
   }

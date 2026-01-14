@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:workpass/models/user_model.dart';
 import 'package:workpass/models/work_score_model.dart';
 import 'package:workpass/models/work_entry_model.dart';
-import 'package:workpass/services/supabase_service.dart';
 import 'package:workpass/theme/app_theme.dart';
 import 'package:workpass/screens/bank/risk_view_screen.dart';
 
@@ -40,9 +39,48 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
     });
 
     try {
-      final user = await SupabaseService.getUser(widget.userId);
-      final score = await SupabaseService.getWorkScore(widget.userId);
-      final entries = await SupabaseService.getWorkEntries(widget.userId);
+      final client = Supabase.instance.client;
+
+      // Fetch user data
+      final userResponse = await client
+          .from('users')
+          .select('*')
+          .eq('id', widget.userId)
+          .maybeSingle();
+
+      UserModel? user;
+      if (userResponse != null) {
+        user = UserModel.fromJson(userResponse);
+      }
+
+      // Fetch work score
+      final scoreResponse = await client
+          .from('work_scores')
+          .select('*')
+          .eq('user_id', widget.userId)
+          .maybeSingle();
+
+      WorkScoreModel? score;
+      if (scoreResponse != null) {
+        score = WorkScoreModel.fromJson(scoreResponse);
+      }
+
+      // Fetch work entries
+      final entriesResponse = await client
+          .from('work_entries')
+          .select('*')
+          .eq('user_id', widget.userId)
+          .order('date', ascending: false);
+
+      final entries = <WorkEntryModel>[];
+      for (var entryData in entriesResponse) {
+        try {
+          entries.add(WorkEntryModel.fromJson(entryData));
+        } catch (e) {
+          // Skip invalid entries
+          continue;
+        }
+      }
 
       setState(() {
         _user = user;
@@ -119,13 +157,7 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppTheme.lightBlue, Colors.white],
-          ),
-        ),
+        decoration: AppTheme.gradientBackground(),
         child: SafeArea(
           child: RefreshIndicator(
             onRefresh: _loadData,
@@ -144,6 +176,8 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
                   _buildIncomeAnalytics(),
                   const SizedBox(height: 24),
                   _buildVerificationRatio(score),
+                  const SizedBox(height: 24),
+                  _buildWorkHistory(),
                 ],
               ),
             ),
@@ -192,7 +226,7 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, size: 16, color: AppTheme.grey),
+        Icon(icon, size: 16, color: AppTheme.darkGray),
         const SizedBox(width: 8),
         Text(
           text,
@@ -350,6 +384,77 @@ class _WorkerProfileScreenState extends State<WorkerProfileScreen> {
             minHeight: 8,
             borderRadius: BorderRadius.circular(4),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWorkHistory() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: AppTheme.glassmorphismCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Work History',
+            style: Theme.of(context).textTheme.displaySmall,
+          ),
+          const SizedBox(height: 16),
+          if (_entries.isEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Text(
+                  'No work entries yet',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+            )
+          else
+            ..._entries.take(5).map((entry) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              entry.platform,
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                            Text(
+                              '${entry.date.day}/${entry.date.month}/${entry.date.year}',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        '₹${entry.amountEarned.toStringAsFixed(0)}',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: AppTheme.primaryBlue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ],
+                  ),
+                )),
+          if (_entries.length > 5)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                '... and ${_entries.length - 5} more entries',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppTheme.darkGray,
+                      fontStyle: FontStyle.italic,
+                    ),
+              ),
+            ),
         ],
       ),
     );

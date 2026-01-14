@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [AppTheme.primaryBlue, AppTheme.deepBlue],
+            colors: [AppTheme.accentBlue, AppTheme.deepBlue],
           ),
         ),
         child: Center(
