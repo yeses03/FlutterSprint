@@ -44,4 +44,74 @@ WorkPass creates a structured and verifiable work identity.
 ## 🧠 WorkScore (Transparent Scoring)
 
 WorkScore is computed using:
+WorkScore =
+(0.4 × MonthlyIncomeScore) +
+(0.3 × StabilityScore) +
+(0.3 × VerificationScore)
+
+
+This ensures trust and fairness for workers and lenders.
+
+---
+
+## 🛠 Tech Stack
+
+- **Flutter (Material 3)** – UI & cross-platform app (Web / Android / iOS-ready)
+- **Supabase** – Database + APIs
+- **PostgreSQL** – structured data storage
+- **Cursor** – rapid development + agent-assisted coding
+
+---
+
+## 📦 Database Schema (Supabase)
+
+Main tables used:
+- `users`
+- `work_entries`
+- `work_scores`
+- `institution_users`
+
+---
+
+## ✨ Key Features
+
+-✅ Premium UI inspired by **Apple / Netflix / fintech apps**  
+-✅ Worker Dashboard (income, history, WorkScore)  
+-✅ Bank Officer Dashboard (worker risk analytics)  
+-✅ Add Work Entry flow (proof optional)  
+-✅ Demo-ready placeholder data support  
+-✅ Supabase integration (real DB data supported)
+
+---
+
+## 🧪 Sample Data
+You can seed the database with mock worker entries to demonstrate:
+
+-✅ Stable monthly income
+-✅ Verification ratios
+-✅ Risk scoring (WorkScore)
+
+#🎥 Demo Walkthrough (Suggested for Judges)
+Open Worker Dashboard
+
+Add Work Entry (proof optional)
+
+Observe:
+-✅ Entry added successfully
+-✅ History updates instantly
+-✅ WorkScore transparency visible
+
+Switch to Bank Officer Dashboard
+
+Review:
+-Worker list + profiles
+-Risk levels
+-Score breakdown
+
+## 📌 Future Scope
+-🔗 Direct gig platform integrations (Swiggy / Zomato / Ola via partnerships)
+-🪪 KYC & verified identity linkage
+-📍 Real-time verification signals (GPS, receipts, platform sync)
+-💸 Loan & payout pipeline (UPI + bank partnerships)
+-🤖 Explainable AI-based risk scoring
 
