@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:workpass/screens/profile_setup_screen.dart';
 import 'package:workpass/screens/bank/bank_dashboard_screen.dart';
+import 'package:workpass/screens/bank/bank_profile_setup_screen.dart';
 import 'package:workpass/screens/worker/worker_dashboard_screen.dart';
+import 'package:workpass/screens/employer/employer_dashboard_screen.dart';
+import 'package:workpass/screens/employer/employer_profile_setup_screen.dart';
 import 'package:workpass/services/supabase_service.dart';
 import 'package:workpass/services/mock_data_service.dart';
 import 'package:workpass/theme/app_theme.dart';
@@ -42,100 +45,158 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _verifyOtp() async {
+    if (!_validateOtp()) return;
+
+    _setLoading(true);
+    await _simulateOtpVerification();
+
+    try {
+      await _handlePostOtpFlow();
+    } finally {
+      if (mounted) _setLoading(false);
+    }
+  }
+
+  bool _validateOtp() {
     if (_otpController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter OTP')),
+      _showSnack('Please enter OTP');
+      return false;
+    }
+    return true;
+  }
+
+  void _setLoading(bool value) {
+    if (mounted) {
+      setState(() => _isLoading = value);
+    }
+  }
+
+  void _showSnack(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _simulateOtpVerification() async {
+    await Future.delayed(const Duration(milliseconds: 0));
+  }
+
+  Future<void> _handlePostOtpFlow() async {
+    switch (widget.role) {
+      case 'bank':
+        await _handleBankLogin();
+        break;
+
+      case 'employer':
+        await _handleEmployerLogin();
+        break;
+
+      default:
+        await _handleWorkerLogin();
+    }
+  }
+
+  Future<void> _handleBankLogin() async {
+    final user = await _fetchUserSilently();
+
+    if (!mounted) return;
+
+    if (user == null) {
+      // New bank officer - route to profile setup
+      _navigateWithFade(
+        BankProfileSetupScreen(phone: _phoneController.text),
       );
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    // Existing bank officer - route to dashboard
+    _navigateWithFade(const BankDashboardScreen());
+  }
 
-    // Demo mode: Accept any OTP
-    await Future.delayed(const Duration(milliseconds: 500));
+  Future<void> _handleEmployerLogin() async {
+    final employerProfile = await _fetchEmployerProfile();
 
-    if (widget.role == 'bank') {
-      // Auto-login for bank officer
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => const BankDashboardScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-          ),
-        );
-      }
-    } else {
-      // Check if user exists
-      Map<String, dynamic>? user;
-      try {
-        final userModel = await SupabaseService.getUserByPhone(_phoneController.text);
-        if (userModel != null) {
-          user = userModel.toJson();
-        }
-      } catch (e) {
-        // Supabase not available, use mock data for demo
-      }
-      
-      if (mounted) {
-        if (user == null) {
-          // For demo: Use mock user if phone matches, otherwise new user
-          if (_phoneController.text.contains('9876543210') || 
-              _phoneController.text.contains('98765')) {
-            // Demo user - use mock data
-            final mockUser = MockDataService.getMockUser();
-            Navigator.of(context).pushReplacement(
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) =>
-                    WorkerDashboardScreen(userId: mockUser.id),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-              ),
-            );
-          } else {
-            // New user - go to profile setup
-            Navigator.of(context).pushReplacement(
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) =>
-                    ProfileSetupScreen(phone: _phoneController.text),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-              ),
-            );
-          }
-        } else {
-          // Existing user - go to dashboard
-          final userId = user?['id'] as String? ?? '';
-          if (userId.isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Login failed')),
-            );
-            setState(() {
-              _isLoading = false;
-            });
-            return;
-          }
-          Navigator.of(context).pushReplacement(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) =>
-                  WorkerDashboardScreen(userId: userId),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-            ),
-          );
-        }
-      }
+    if (!mounted) return;
+
+    if (employerProfile == null) {
+      // New employer - route to profile setup
+      _navigateWithFade(
+        EmployerProfileSetupScreen(phone: _phoneController.text),
+      );
+      return;
     }
 
-    setState(() {
-      _isLoading = false;
-    });
+    // Existing employer - route to dashboard with phone
+    _navigateWithFade(
+        EmployerDashboardScreen(employerPhone: _phoneController.text));
+  }
+
+  Future<void> _handleWorkerLogin() async {
+    final user = await _fetchUserSilently();
+
+    if (!mounted) return;
+
+    if (user == null) {
+      _handleNewOrDemoWorker();
+      return;
+    }
+
+    final userId = user['id'] as String? ?? '';
+    if (userId.isEmpty) {
+      _showSnack('Login failed');
+      return;
+    }
+
+    _navigateWithFade(WorkerDashboardScreen(userId: userId));
+  }
+
+  void _handleNewOrDemoWorker() {
+    final phone = _phoneController.text;
+
+    if (phone.contains('9876543210') || phone.contains('98765')) {
+      final mockUser = MockDataService.getMockUser();
+      _navigateWithFade(
+        WorkerDashboardScreen(userId: mockUser.id),
+      );
+    } else {
+      _navigateWithFade(
+        ProfileSetupScreen(phone: phone),
+      );
+    }
+  }
+
+  Future<Map<String, dynamic>?> _fetchUserSilently() async {
+    try {
+      final userModel =
+          await SupabaseService.getUserByPhone(_phoneController.text);
+      print('userModel Fetched ${userModel.toString()}');
+      return userModel?.toJson();
+    } catch (_) {
+      // Demo / offline mode fallback
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> _fetchEmployerProfile() async {
+    try {
+      final employerProfile =
+          await SupabaseService.getEmployerByPhone(_phoneController.text);
+      return employerProfile;
+    } catch (_) {
+      // Demo / offline mode fallback
+      return null;
+    }
+  }
+
+  void _navigateWithFade(Widget page) {
+    if (!mounted) return;
+
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (_, animation, __) => page,
+        transitionsBuilder: (_, animation, __, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    );
   }
 
   @override
@@ -148,9 +209,9 @@ class _LoginScreenState extends State<LoginScreen> {
             physics: const AlwaysScrollableScrollPhysics(),
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height - 
-                           MediaQuery.of(context).padding.top - 
-                           MediaQuery.of(context).padding.bottom,
+                minHeight: MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).padding.top -
+                    MediaQuery.of(context).padding.bottom,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
@@ -164,7 +225,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 40),
                     Text(
-                      widget.role == 'bank' ? 'Bank Officer Login' : 'Gig Worker Login',
+                      widget.role == 'bank'
+                          ? 'Bank Officer Login'
+                          : widget.role == 'employer'
+                              ? 'Employer Login'
+                              : 'Gig Worker Login',
                       style: Theme.of(context).textTheme.displayMedium,
                     ),
                     const SizedBox(height: 8),
@@ -176,9 +241,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextField(
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
+                      maxLength: 10,
                       decoration: const InputDecoration(
                         labelText: 'Phone Number',
                         hintText: '+91 9876543210',
+                        hintStyle:
+                            TextStyle(color: Color.fromRGBO(54, 50, 50, 0.6)),
                         prefixIcon: Icon(Icons.phone),
                       ),
                       enabled: !_showOtp,
@@ -188,6 +256,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextField(
                         controller: _otpController,
                         keyboardType: TextInputType.number,
+                        maxLength: 6,
                         decoration: const InputDecoration(
                           labelText: 'OTP',
                           hintText: 'Enter 6-digit OTP',
@@ -208,7 +277,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? const SizedBox(
                                 height: 20,
                                 width: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
                               )
                             : const Text('Continue'),
                       ),
@@ -223,4 +293,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-

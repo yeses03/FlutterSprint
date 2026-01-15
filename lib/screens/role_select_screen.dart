@@ -95,6 +95,32 @@ class RoleSelectScreen extends StatelessWidget {
                         );
                       },
                     ),
+                    const SizedBox(height: 24),
+                    _RoleButton(
+                      icon: Icons.business,
+                      title: 'I am an Employer',
+                      subtitle: 'Verify workers and manage entries',
+                      onTap: () {
+                        Navigator.of(context).push(
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation, secondaryAnimation) =>
+                                const LoginScreen(role: 'employer'),
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              return SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(1.0, 0.0),
+                                  end: Offset.zero,
+                                ).animate(CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeOutCubic,
+                                )),
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
                     const SizedBox(height: 40),
                   ],
                 ),
