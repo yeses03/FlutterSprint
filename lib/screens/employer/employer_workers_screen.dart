@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:workpass/services/supabase_service.dart';
 import 'package:workpass/theme/app_theme.dart';
 import 'package:workpass/screens/employer/employer_worker_detail_screen.dart';
+import 'package:workpass/screens/employer/add_worker_screen.dart';
 
 class EmployerWorkersScreen extends StatefulWidget {
-  const EmployerWorkersScreen({super.key});
+  final String? employerPhone;
+  final VoidCallback? onTabSelected;
+
+  const EmployerWorkersScreen({super.key, this.employerPhone, this.onTabSelected});
 
   @override
   State<EmployerWorkersScreen> createState() => _EmployerWorkersScreenState();
@@ -14,11 +18,42 @@ class _EmployerWorkersScreenState extends State<EmployerWorkersScreen> {
   List<Map<String, dynamic>> _workers = [];
   bool _isLoading = true;
   String _searchQuery = '';
+  String? _employerId;
+  String? _employerPhone;
+  bool _hasLoaded = false;
 
   @override
   void initState() {
     super.initState();
+    _employerPhone = widget.employerPhone;
     _loadData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Reload data each time the screen becomes visible (when dependencies change)
+    // This ensures fresh data when navigating back to this tab
+    if (_hasLoaded && !_isLoading) {
+      _loadData();
+    }
+  }
+
+  @override
+  void didUpdateWidget(EmployerWorkersScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Reload if employer phone changed
+    if (oldWidget.employerPhone != widget.employerPhone) {
+      _employerPhone = widget.employerPhone;
+      _loadData();
+    }
+  }
+
+  // Public method to reload data (can be called from parent)
+  void reloadData() {
+    if (!_isLoading) {
+      _loadData();
+    }
   }
 
   Future<void> _loadData() async {
@@ -27,20 +62,81 @@ class _EmployerWorkersScreenState extends State<EmployerWorkersScreen> {
     });
 
     try {
-      // Use authenticated method that uses RLS
-      final workers = await SupabaseService.searchWorkersForEmployer(
-        searchQuery: _searchQuery.isEmpty ? null : _searchQuery,
-      );
+      // Get employer phone if not provided
+      if (_employerPhone == null) {
+        // Try to get from current user context
+        // For now, we'll need to pass it from the dashboard
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Get employer_id
+      _employerId = await SupabaseService.getEmployerIdByPhone(_employerPhone!);
+      
+      if (_employerId == null) {
+        setState(() {
+          _workers = [];
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Fetch workers from employer_worker table
+      final workers = await SupabaseService.getEmployerWorkers(_employerId!);
+
+      // Apply search filter
+      var filteredWorkers = workers;
+      if (_searchQuery.isNotEmpty) {
+        final queryLower = _searchQuery.toLowerCase();
+        filteredWorkers = workers.where((worker) {
+          final name = (worker['name'] as String? ?? '').toLowerCase();
+          final phone = (worker['phone'] as String? ?? '').toLowerCase();
+          final city = (worker['city'] as String? ?? '').toLowerCase();
+          final workType = (worker['work_type'] as String? ?? '').toLowerCase();
+          return name.contains(queryLower) ||
+              phone.contains(queryLower) ||
+              city.contains(queryLower) ||
+              workType.contains(queryLower);
+        }).toList();
+      }
 
       setState(() {
-        _workers = workers;
+        _workers = filteredWorkers;
         _isLoading = false;
+        _hasLoaded = true;
       });
     } catch (e) {
       setState(() {
         _workers = [];
         _isLoading = false;
+        _hasLoaded = true;
       });
+    }
+  }
+
+  Future<void> _navigateToAddWorker() async {
+    if (_employerPhone == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Employer phone not available')),
+      );
+      return;
+    }
+
+    final result = await Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            AddWorkerScreen(employerPhone: _employerPhone!),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
+
+    // Reload data after returning from add worker screen
+    if (result == true || mounted) {
+      _loadData();
     }
   }
 
@@ -51,6 +147,19 @@ class _EmployerWorkersScreenState extends State<EmployerWorkersScreen> {
         title: const Text('Workers'),
         elevation: 0,
         backgroundColor: Colors.transparent,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person_add),
+            onPressed: _navigateToAddWorker,
+            tooltip: 'Add Worker',
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _navigateToAddWorker,
+        icon: const Icon(Icons.person_add),
+        label: const Text('Add Worker'),
+        backgroundColor: AppTheme.primaryBlue,
       ),
       body: Container(
         decoration: AppTheme.subtleGradient(),

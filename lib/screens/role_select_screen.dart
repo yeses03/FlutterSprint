@@ -98,7 +98,7 @@ class RoleSelectScreen extends StatelessWidget {
                     const SizedBox(height: 24),
                     _RoleButton(
                       icon: Icons.business,
-                      title: 'Continue as Employer',
+                      title: 'I am an Employer',
                       subtitle: 'Verify workers and manage entries',
                       onTap: () {
                         Navigator.of(context).push(

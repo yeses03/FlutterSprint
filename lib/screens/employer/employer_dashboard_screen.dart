@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:workpass/screens/employer/employer_workers_screen.dart';
 import 'package:workpass/screens/employer/employer_ai_verification_screen.dart';
 import 'package:workpass/screens/employer/employer_profile_screen.dart';
+import 'package:workpass/screens/employer/add_worker_screen.dart';
 import 'package:workpass/theme/app_theme.dart';
 
 class EmployerDashboardScreen extends StatefulWidget {
-  const EmployerDashboardScreen({super.key});
+  final String? employerPhone;
+
+  const EmployerDashboardScreen({super.key, this.employerPhone});
 
   @override
   State<EmployerDashboardScreen> createState() => _EmployerDashboardScreenState();
@@ -14,11 +17,38 @@ class EmployerDashboardScreen extends StatefulWidget {
 class _EmployerDashboardScreenState extends State<EmployerDashboardScreen> {
   int _currentIndex = 0;
 
+  Future<void> _navigateToAddWorker() async {
+    if (widget.employerPhone == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Employer phone not available')),
+      );
+      return;
+    }
+
+    final result = await Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            AddWorkerScreen(employerPhone: widget.employerPhone!),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
+
+    // Refresh workers screen if we're on that tab
+    if (result == true && _currentIndex == 1) {
+      // The workers screen will reload when it becomes visible again
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screens = [
       _buildHomeScreen(),
-      const EmployerWorkersScreen(),
+      EmployerWorkersScreen(
+        key: ValueKey('workers_${widget.employerPhone}'),
+        employerPhone: widget.employerPhone,
+      ),
       const EmployerAiVerificationScreen(),
       const EmployerProfileScreen(),
     ];
@@ -41,7 +71,7 @@ class _EmployerDashboardScreenState extends State<EmployerDashboardScreen> {
         ),
         child: SafeArea(
           child: Container(
-            height: 70,
+            height: 80,
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -147,6 +177,13 @@ class _EmployerDashboardScreenState extends State<EmployerDashboardScreen> {
                         ],
                       ),
                       const SizedBox(height: 24),
+                      _buildActionCard(
+                        icon: Icons.person_add,
+                        title: 'Add Worker',
+                        subtitle: 'Add a new worker to your team',
+                        onTap: _navigateToAddWorker,
+                      ),
+                      const SizedBox(height: 12),
                       _buildActionCard(
                         icon: Icons.people,
                         title: 'View Workers',
@@ -283,8 +320,8 @@ class _EmployerDashboardScreenState extends State<EmployerDashboardScreen> {
                     ),
                     child: Icon(
                       isSelected ? activeIcon : icon,
-                      color: isSelected ? AppTheme.primaryBlue : AppTheme.textTertiary,
-                      size: 24,
+                      color: isSelected ? AppTheme.primaryBlue : AppTheme.textPrimary,
+                      size: 18,
                     ),
                   ),
                 ),
@@ -295,7 +332,7 @@ class _EmployerDashboardScreenState extends State<EmployerDashboardScreen> {
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: isSelected ? AppTheme.primaryBlue : AppTheme.textTertiary,
                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                          fontSize: 11,
+                          fontSize: 8,
                         ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
